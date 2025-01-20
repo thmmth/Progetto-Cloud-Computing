@@ -1,24 +1,24 @@
 services:
-  frontend:
-    build: ./frontend
+  mongo:
+    image: mongo
+    container_name: mongo
     ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    
+      - "27017:27017"
+
   backend:
     build: ./backend
+    container_name: backend
     ports:
-      - "5000:5000"
+      - "5001:5001"
     environment:
       - MONGO_URI=mongodb://mongo:27017/socialDashboard
     depends_on:
       - mongo
 
-  mongo:
-    image: mongo
+  frontend:
+    build: ./frontend
+    container_name: frontend
     ports:
-      - "27017:27017"
+      - "3000:3000"
+    depends_on:
+      - backend

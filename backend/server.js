@@ -5,23 +5,18 @@ const mongoose = require("mongoose");
 const SocialData = require("./models/SocialData");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(express.json());
 app.use(cors());
 
 // Connessione al database MongoDB
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Database connection error:", err));
 
 // Rotte API
-// Ottieni i dati
 app.get("/api/social-data", async (req, res) => {
   try {
     const data = await SocialData.find();
@@ -31,7 +26,6 @@ app.get("/api/social-data", async (req, res) => {
   }
 });
 
-// Aggiungi nuovi dati
 app.post("/api/social-data", async (req, res) => {
   const { platform, likes, comments } = req.body;
   try {
@@ -47,7 +41,3 @@ app.post("/api/social-data", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-app.get("/", (req, res) => {
-    res.send("Welcome to the Social Media Dashboard API");
-  });
-  
