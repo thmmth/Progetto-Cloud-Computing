@@ -8,4 +8,4 @@ const PostSchema = new mongoose.Schema({
   retrievedAt: { type: Date, default: Date.now }, // Data del recupero
 });
 
-module.exports = mongoose.model("Post", PostSchema);
+module.exports = mongoose.model("Post", PostSchema, "posts");

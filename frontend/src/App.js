@@ -11,7 +11,7 @@ const App = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5001/api/social-data")
+      .get("http://localhost:5001/api/posts")
       .then((response) => setData(response.data))
       .catch((error) => console.error("Errore nel recuperare i dati:", error));
   }, []);
