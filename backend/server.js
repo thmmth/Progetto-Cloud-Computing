@@ -10,7 +10,14 @@ const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+
+// Configura i CORS per consentire richieste solo dal frontend
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://192.168.1.27:3000'], // Aggiungi entrambe le origini
+  methods: ['GET', 'POST'], // Permette metodi GET e POST
+  credentials: true, // Se necessario per autenticazione
+};
+app.use(cors(corsOptions));
 
 // Connessione al database MongoDB
 mongoose
@@ -18,20 +25,18 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Database connection error:", err));
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error("❌ Database connection error:", err));
 
 // Rotte API
 
 // Rotta per ottenere tutti i post
-app.get("/api/posts", async (req, res) => {
+app.get('/api/posts', async (req, res) => {
   try {
-    const posts = await Post.find();
-    console.log("Dati recuperati dalla collezione posts:", posts);
+    const posts = await Post.find(); // Recupera i post dal database
     res.json(posts);
   } catch (error) {
-    console.error("Errore nel recuperare i post:", error);
-    res.status(500).json({ error: "Errore nel recuperare i post" });
+    res.status(500).json({ error: 'Errore nel recuperare i post' });
   }
 });
 
@@ -41,10 +46,10 @@ app.post("/api/posts", async (req, res) => {
   try {
     const newPost = new Post({ postId, likes, comments });
     await newPost.save();
-    console.log("Nuovo documento aggiunto a posts:", newPost);
+    console.log("🆕 Nuovo documento aggiunto a posts:", newPost);
     res.status(201).json(newPost);
   } catch (error) {
-    console.error("Errore nell'aggiungere il post:", error);
+    console.error("❌ Errore nell'aggiungere il post:", error);
     res.status(500).json({ error: "Errore nell'aggiungere il post" });
   }
 });
@@ -67,21 +72,21 @@ app.post("/api/posts/import", async (req, res) => {
       if (!existingPost) {
         const newPost = new Post({ postId, likes, comments });
         await newPost.save();
-        console.log(`Salvato post: ${postId}`);
+        console.log(`✅ Salvato post: ${postId}`);
       } else {
-        console.log(`Post già esistente: ${postId}`);
+        console.log(`ℹ️ Post già esistente: ${postId}`);
       }
     }
 
     res.status(200).json({ message: "Post importati con successo" });
   } catch (error) {
-    console.error("Errore durante l'importazione dei post:", error.message);
+    console.error("❌ Errore durante l'importazione dei post:", error.message);
     res.status(500).json({ error: "Errore durante l'importazione dei post" });
   }
 });
 
 // Avvia il server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server is running on http://0.0.0.0:${PORT}`);
+  console.log(`🌐 Accessibile dalla rete locale su http://<IP_DEL_SERVER>:${PORT}`);
 });
-

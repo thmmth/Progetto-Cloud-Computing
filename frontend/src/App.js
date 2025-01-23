@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import { Bar } from "react-chartjs-2";
 
 // Registra gli elementi di Chart.js
@@ -9,15 +16,22 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 const App = () => {
   const [data, setData] = useState([]);
 
+  // URL API dal file .env
+  const API_URL = process.env.REACT_APP_API_URL || "http://192.168.1.27:5001";
+
+  // Effettua una richiesta all'API per ottenere i dati
   useEffect(() => {
     axios
-      .get("http://localhost:5001/api/posts")
+      .get(`${API_URL}/api/posts`)
       .then((response) => setData(response.data))
-      .catch((error) => console.error("Errore nel recuperare i dati:", error));
-  }, []);
+      .catch((error) =>
+        console.error("Errore nel recuperare i dati dall'API:", error)
+      );
+  }, [API_URL]);
 
+  // Prepara i dati per il grafico
   const chartData = {
-    labels: data.map((item) => item.platform),
+    labels: data.map((item) => item.platform || "Unknown Platform"),
     datasets: [
       {
         label: "Likes",
@@ -40,7 +54,11 @@ const App = () => {
     <div>
       <h1>Social Media Dashboard</h1>
       <div style={{ width: "80%", margin: "auto" }}>
-        <Bar data={chartData} />
+        {data.length > 0 ? (
+          <Bar data={chartData} />
+        ) : (
+          <p>Caricamento dei dati in corso...</p>
+        )}
       </div>
     </div>
   );
